@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/alt-text */
 'use client'
-import React, { HTMLAttributes, useEffect, useRef, useState } from 'react'
+
+import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import { useInView } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -28,7 +30,7 @@ function splitArray<T>(array: Array<T>, numParts: number) {
 	return result
 }
 
-const ReviewColumn = ({
+function ReviewColumn({
 	reviews,
 	className,
 	reviewClassName,
@@ -38,10 +40,11 @@ const ReviewColumn = ({
 	className?: string
 	reviewClassName?: (reviewIndex: number) => string
 	msPerPixel?: number
-}) => {
+}) {
 	const columnRef = useRef<HTMLDivElement | null>(null)
 	const [columnHeight, setColumnHeight] = useState(0)
-	const duration = `${columnHeight * msPerPixel}ms `
+	const duration = `${columnHeight * msPerPixel}ms`
+
 	useEffect(() => {
 		if (!columnRef.current) return
 
@@ -58,8 +61,8 @@ const ReviewColumn = ({
 
 	return (
 		<div
-			className={cn('animate-marquee space-y-8 py-4', className)}
 			ref={columnRef}
+			className={cn('animate-marquee space-y-8 py-4', className)}
 			style={{ '--marquee-duration': duration } as React.CSSProperties}
 		>
 			{reviews.concat(reviews).map((imgSrc, reviewIndex) => (
@@ -73,11 +76,11 @@ const ReviewColumn = ({
 	)
 }
 
-interface IReviewProps extends HTMLAttributes<HTMLDivElement> {
+interface ReviewProps extends HTMLAttributes<HTMLDivElement> {
 	imgSrc: string
 }
 
-const Review = ({ imgSrc, className, ...props }: IReviewProps) => {
+function Review({ imgSrc, className, ...props }: ReviewProps) {
 	const POSSIBLE_ANIMATION_DELAYS = [
 		'0s',
 		'0.1s',
@@ -106,7 +109,7 @@ const Review = ({ imgSrc, className, ...props }: IReviewProps) => {
 	)
 }
 
-const ReviewGrid = () => {
+function ReviewGrid() {
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const isInView = useInView(containerRef, { once: true, amount: 0.4 })
 	const columns = splitArray(PHONES, 3)
@@ -116,11 +119,11 @@ const ReviewGrid = () => {
 
 	return (
 		<div
-			className='relative -mx-4 mt-16 grid h-[49rem] max-h-[150vh] grid-cols-1 items-start gap-8 overflow-hidden px-4 sm:mt-20 md:grid-cols-2 lg:grid-cols-3'
 			ref={containerRef}
+			className='relative -mx-4 mt-16 grid h-[49rem] max-h-[150vh] grid-cols-1 items-start gap-8 overflow-hidden px-4 sm:mt-20 md:grid-cols-2 lg:grid-cols-3'
 		>
 			{isInView ? (
-				<React.Fragment>
+				<>
 					<ReviewColumn
 						reviews={[...column1, ...column3.flat(), ...column2]}
 						reviewClassName={reviewIndex =>
@@ -131,7 +134,6 @@ const ReviewGrid = () => {
 						}
 						msPerPixel={10}
 					/>
-
 					<ReviewColumn
 						reviews={[...column2, ...column3[1]]}
 						className='hidden md:block'
@@ -140,25 +142,25 @@ const ReviewGrid = () => {
 						}
 						msPerPixel={15}
 					/>
-
 					<ReviewColumn
 						reviews={column3.flat()}
 						className='hidden md:block'
 						msPerPixel={10}
 					/>
-				</React.Fragment>
+				</>
 			) : null}
+			<div className='pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-100' />
+			<div className='pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-100' />
 		</div>
 	)
 }
 
-const Reviews = () => {
+export function Reviews() {
 	return (
 		<MaxWidthWrapper className='relative max-w-5xl'>
 			<img
 				aria-hidden='true'
 				src='/what-people-are-buying.png'
-				alt='reviews'
 				className='absolute select-none hidden xl:block -left-32 top-1/3'
 			/>
 
@@ -166,5 +168,3 @@ const Reviews = () => {
 		</MaxWidthWrapper>
 	)
 }
-
-export default Reviews
